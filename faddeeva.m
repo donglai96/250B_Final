@@ -60,5 +60,5 @@ Z = (L+1i*z(idx))./(L-1i*z(idx));
 p = polyval(a,Z); % Polynomial evaluation.
 w(idx) = 2*p./(L-1i*z(idx)).^2 + (1/sqrt(pi))./(L-1i*z(idx)); % Evaluate w(z).
 
-% convert the upper half-plane results to the lower half-plane if necesary
+% convert the upper half-plane results to the lower half-plane if necessary
 w(idx1) = conj(2*exp(-z(idx1).^2) - w(idx1));

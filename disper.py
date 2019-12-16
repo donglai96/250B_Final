@@ -15,6 +15,7 @@ def dispersion_matrix():
     R = symbols('R')
     P = symbols('P')
     theta_rad = symbols('theta')
+    # Only solve the positive refraction
     nn = symbols('nn',positive = True)
     m_11 = 2 * (R - nn ** 2 + 0.5 * nn ** 2 * (sin(theta_rad)) ** 2)
     m_12 = nn ** 2 * sin(theta_rad) ** 2
@@ -86,6 +87,7 @@ def solve_dispersion(B, species, n, wave_frequency, theta_input):
     #print(f.subs([(L, L_wave), (P, P_wave), (R, R_wave), (theta, theta_deg)]))
     D_0_sim = f.subs([(L, L_wave), (P, P_wave), (R, R_wave), (theta, theta_deg)])
     refractive_index = solve(D_0_sim)
+    print("nn",refractive_index)
     return refractive_index[0]
 
 def faddeeva(x):

@@ -1,6 +1,8 @@
 from plasmapy.physics import parameters
-from sympy import symbols, diff, exp, pi
+from sympy import symbols, diff, exp, pi, cos, sin
 from astropy import units as u
+from sympy import besselj,DiracDelta
+
 
 class particles():
     def __init__(self, name, density, magnetic_field, Tx, Tz):
@@ -24,15 +26,16 @@ class particles():
         vz = symbols('vz')
         vth_x = symbols('vth_x')
         vth_z = symbols('vth_z')
-        Tx = symbols('Tx')
-        Tz = symbols('Tz')
         exp_term = exp((-vx**2/(vth_x)**2) +(-(vz)**2/(vth_z)**2))
         coeff_term = pi**(-3/2)*vth_x**-2 * vth_z**(-1)
+        # exp_term = exp((-vx ** 2 / 8) + (-(vz) ** 2 /  2))
+        # coeff_term = (2*pi) ** (-3 / 2) *(128)**(-1/2)
+
         return exp_term* coeff_term
     def F_1(self):
 
         """
-        Bi-Maxwellian
+        Bi-Maxwellian-Drift
         """
         #x means perpendicular and z means parallel
 
@@ -40,8 +43,6 @@ class particles():
         vz = symbols('vz')
         vth_x = symbols('vth_x')
         vth_z = symbols('vth_z')
-        Tx = symbols('Tx')
-        Tz = symbols('Tz')
         exp_term = exp((-vx**2/(vth_x)**2) +(-(vz+4e7)**2/(vth_z)**2))
         coeff_term = pi**(-3/2)*vth_x**-2 * vth_z**(-1)
         return exp_term* coeff_term
@@ -61,3 +62,33 @@ class particles():
         g1_term1 = diff(F,vx)
         g1_term2 =( vz * diff(F,vx) - vx*diff(F,vz))
         return g1_term1, g1_term2
+
+    def Jm_p(self,m):
+        """
+        The argument of Jm change to r
+        r = k_perp*v_perp/Omega
+        @param m: the order of Bessel function
+        @return:
+        """
+        # The resaon use r here is because Jm(r) is easy to integrate
+        r = symbols('r')
+        argument = r
+        return besselj(m,argument)
+
+    def delta_function(self, m):
+        """
+        The argument of Dirac is v_para - (w -m*Omega/k_parallel)
+        @param m: The order
+        @return: Dirac function of argument
+        """
+        vz = symbols('vz')
+        k_para = symbols('k_para')
+        w = symbols('w')
+        argument = vz - (w - m * self.gyro_f.value) / k_para
+        return DiracDelta(argument)
+
+    def weight_function_p(self,m):
+        theta = symbols('theta')
+        gamma_m = (((1 + cos(theta))*self.Jm_p(m+1) + (1-cos(theta))*self.Jm_p(m-1))/(2*cos(theta)))**2
+
+        return gamma_m
