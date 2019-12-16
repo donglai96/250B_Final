@@ -10,7 +10,7 @@ import particle
 from astropy import constants as const
 from sympy import sin,cos,exp
 
-def wave_growth_para(name,density,B,T_perp,T_para,waveperOmega):
+def wave_growth_para(name,density,B,T_perp,T_para,waveperOmega,distribution):
     if name == 'e':
         n =density[0]
     else:
@@ -47,7 +47,7 @@ def wave_growth_para(name,density,B,T_perp,T_para,waveperOmega):
 
 
     #print(result)
-    G1_term1, G1_term2 = electron.G_1()
+    G1_term1, G1_term2 = electron.G_1(distribution)
     print(G1_term1,G1_term2,f)
    # print(G1_term1, G1_term2)
     #print(refraction_index_para)
@@ -68,3 +68,4 @@ def wave_growth_para(name,density,B,T_perp,T_para,waveperOmega):
     #wave_growth_eva = wave_para_int.subs(vz, vz_res)
     #print(wave_para_int)
     return wave_para_int_new, vz_res, G1_new
+

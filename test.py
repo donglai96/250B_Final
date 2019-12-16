@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import cold_growth_rate
 from sympy import ln
 import particle
+from scipy.optimize import fsolve
 from astropy import constants as const
 from sympy import sin,cos,exp
 
@@ -53,11 +54,12 @@ theta_input = 0
 wave_over_Omega = 0.05
 T_perp = 400
 T_para = 100
+distribution = 'drift'
 electron = particle.particles('e',n,B,T_perp,T_para)
 print("thermal",electron.vth_x,electron.vth_z)
 
 # vz = symbols('vz')
-growth_rate_base,vz_res_base,G0 = cold_growth_rate.wave_growth_para('e',n,B,T_perp,T_para,wave_over_Omega)
+growth_rate_base,vz_res_base,G0 = cold_growth_rate.wave_growth_para('e',n,B,T_perp,T_para,wave_over_Omega,distribution = 'drift')
 
 print("The base of growth rate",growth_rate_base)
 
@@ -66,8 +68,9 @@ x = np.arange(0.1,0.5,0.05)
 growth_rate_array_4 = []
 vz_res_array = []
 growth_value_base = growth_rate_base.evalf()
+
 for w in x:
-    growth_rate, vz_res, G1 =  cold_growth_rate.wave_growth_para('e',n,B,T_perp,T_para,w)
+    growth_rate, vz_res, G1 =  cold_growth_rate.wave_growth_para('e',n,B,T_perp,T_para,w,distribution)
 
     print('v_res',vz_res)
     growth_rate_array_4 = np.append(growth_rate_array_4,growth_rate)
@@ -92,3 +95,16 @@ plt.show()
 #
 # growth_rate_array_2 = []
 
+# Test for Langmiurt wave
+# k_min = 0.1
+# dk1 = 0.1
+# k_mid = 1
+# dk2 = 1
+# kmax = 10
+# k = np.append(np.arange(k_min,k_mid,dk1),np.arange(k_mid,kmax,dk2))
+# c = 1
+# print(k)
+# w = disper.wave_growth_Langmuir(k,c)
+# wre = np.real(w)
+# wie = np.imag(w)
+# print(wre,wie)

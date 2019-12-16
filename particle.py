@@ -26,33 +26,38 @@ class particles():
         vth_z = symbols('vth_z')
         Tx = symbols('Tx')
         Tz = symbols('Tz')
-        exp_term = exp((-vx**2/(vth_x)**2) +(-(vz+4e7)**2/(vth_z)**2))
+        exp_term = exp((-vx**2/(vth_x)**2) +(-(vz)**2/(vth_z)**2))
         coeff_term = pi**(-3/2)*vth_x**-2 * vth_z**(-1)
         return exp_term* coeff_term
     def F_1(self):
 
         """
-        Drift_Bi-Maxwellian
+        Bi-Maxwellian
         """
         #x means perpendicular and z means parallel
 
         vx = symbols('vx')
         vz = symbols('vz')
-        v_drift = symbols('v_drift')
+        vth_x = symbols('vth_x')
+        vth_z = symbols('vth_z')
+        Tx = symbols('Tx')
         Tz = symbols('Tz')
-        exp_term = exp((-vx**2/self.Tx) +(-vz**2/self.Tz))
-        coeff_term = pi**(-3/2)*self.Tx**-1 * self.Tz**(-1/2)
+        exp_term = exp((-vx**2/(vth_x)**2) +(-(vz+4e7)**2/(vth_z)**2))
+        coeff_term = pi**(-3/2)*vth_x**-2 * vth_z**(-1)
         return exp_term* coeff_term
-
-    def G_1(self):
+    def G_1(self,distribution):
         """
         Return to 2 term of G1,
         The first is df/dvx
         The second is vz*df/dvx - vx*df/dz
 
         """
+        if distribution =='drift':
+            F = self.F_1()
+        else:
+            F = self.F_0()
         vx = symbols('vx')
         vz = symbols('vz')
-        g1_term1 = diff(self.F_0(),vx)
-        g1_term2 =( vz * diff(self.F_0(),vx) - vx*diff(self.F_0(),vz))
+        g1_term1 = diff(F,vx)
+        g1_term2 =( vz * diff(F,vx) - vx*diff(F,vz))
         return g1_term1, g1_term2

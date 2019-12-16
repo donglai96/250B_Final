@@ -1,8 +1,9 @@
 from sympy import symbols,pi
 from astropy import units as u
 from plasmapy.physics import parameters
-from sympy import Matrix,simplify,solve
+from sympy import Matrix,simplify,solve,root
 from sympy import sin, cos
+from scipy import special
 
 
 
@@ -34,7 +35,7 @@ from astropy import units as u
 
 import math
 from astropy import constants as const
-from scipy import optimize
+from scipy.optimize import fsolve
 import scipy.special as spl
 
 def cold_plasma_LRP(B, species, n, omega ,flag= True ):
@@ -86,3 +87,42 @@ def solve_dispersion(B, species, n, wave_frequency, theta_input):
     D_0_sim = f.subs([(L, L_wave), (P, P_wave), (R, R_wave), (theta, theta_deg)])
     refractive_index = solve(D_0_sim)
     return refractive_index[0]
+
+def faddeeva(x):
+    """
+    Faddeeva function is defined as
+
+    w(z) = exp(-z**2) * erfc(-i * z)
+    Computation of the Complex Error Function J.A.C. Weideman
+
+    The faddeeva function is wrapped in C++ in scipy
+
+
+    """
+    return special.wofz(x)
+
+def zeta(x):
+    zeta = faddeeva(x) * 1j * np.sqrt(np.pi)
+    return zeta
+def wave_growth_Langmuir(k, c):
+    """
+    This function is for calculating the dispersion relationship
+    f is maxwellian distribution
+    c is initial value
+    """
+    w = []
+    for kk in k:
+
+        def f(x):
+            f = 1 + kk ** 2 + x * zeta(x)
+            return f
+        print(f(1+1j))
+        print(c)
+
+        b = fsolve(f,c)
+        print(b)
+        x = c*np.sqrt(2)*kk
+        w = np.append(w,x)
+
+
+    return w
